@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" conent="width-device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>FGO Inventory</title>
+</head>
+<body onload="CreateTableFromJSON();">
+    <nav>
+        <h4>Fate/Grand Order Inventory and Servant Planner</h4>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/updateItems">Update Items</a></li>
+            <li><a href="/updateServant">Update Servant</a></li>
+            <li><a href="/addServant">Add Servant</a></li>
+        </ul>
+    </nav>
+    
+        <div class="container">
+        <div class="card">
+            <div class="card-header">    
+                <div class="row">
+                    <div id="photo">
+                        <!-- here  where the pic goes ! -->
+                    </div>
+                    <div id="name">
+                        <!-- here  where the name goes ! -->
+                    </div>
+                </div>    
+                <div class="card-block row">
+                    <div id="tweet">
+                        <!-- here  where the tweet goes ! -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="card-block row">    
+        <div id="tweet"> </div>
+    </div>
+
+    <input type="text" id="names" name="name"><br><br>
+
+    <button onclick="CreateTableFromJSONWithVar()">Select</button>
+
+    <p id="showData"></p>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+
+
+<script>
+    //<select id="names">
+    //    <option value="" onchange="CreateTableFromJSONWithVar()">-- Select --</option>
+    //</select>
+    //var servantName = "Mash Kyrielight";
+    
+    function CreateTableFromJSON() {
+        
+        //var x = document.getElementById("myText").value;
+        //var servantName = document.getElementById("myText").value;
+        //console.log(servantName + "Yeet + Ya: ");
+        function get_data_from_url(url){
+            var http_req = new XMLHttpRequest();
+            http_req.open("GET",url,false);
+            http_req.send(null);
+            return http_req.responseText;          
+        }
+
+        var data_url = "https://api.atlasacademy.io/export/NA/basic_servant.json";
+        //var data_url = "https://api.atlasacademy.io/basic/NA/servant/search?lang=en&name=" + servantName;
+        var servantdata = [];
+        servantdata = JSON.parse(get_data_from_url(data_url));
+        //console.log(servantdata);
+        
+        var col = [];
+        for (var i = 0; i < servantdata.length; i++) {
+            for (var key in servantdata[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
+
+        //
+        var names = document.getElementById('names');
+        // CREATE DYNAMIC TABLE.
+        var table = document.createElement("table");
+
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+        var tr = table.insertRow(-1);                   // TABLE ROW.
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+        
+        for (var i = 0; i < servantdata.length; i++) {
+
+            tr = table.insertRow(-1);
+            
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+               if (j === 6) {      // The last JSON column has image urls.
+
+                        // Create an <img> element to show the images.
+                        var img = document.createElement('img');        
+                        img.src = servantdata[i][col[j]];   // The image source from JSON array.
+                        //console.log(servantdata[i].Image);
+                        tabCell.appendChild(img);
+                        //console.log(img);
+                }
+                else if(j == 3){
+                    //names.innerHTML = names.innerHTML +'<option value="' + servantdata[i][col[j]] + '">' + servantdata[i][col[j]] + '</option>';
+                    tabCell.innerHTML = servantdata[i][col[j]];
+                    }
+                else{
+                        tabCell.innerHTML = servantdata[i][col[j]];
+                           
+                }
+                
+            }
+        /*
+        var tabCell = tr.insertCell(-1);
+        var btn = document.createElement('input');
+        btn.type = "button";
+        btn.className = "btn";
+        btn.value = "Stuff";
+        btn.onclick = (function(entry) {return function() {chooseUser(entry);}})(entry);
+        tabCell.appendChild(btn);    */
+        var tabCell = tr.insertCell(-1);
+        var img = '<button type="button" href="/" class="btn btn-primary">Add</button>';
+        tabCell.innerHTML = img;
+        //tabCell.appendChild(img);
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+    }
+    }
+
+    function CreateTableFromJSONWithVar() {
+        console.log("Hit");
+        //document.getElementById(showData).innerHTML = "";
+        //var x = document.getElementById("myText").value;
+        var servantName = document.getElementById("names").value;
+        console.log(servantName);
+        //console.log(servantName + "Yeet + Ya: ");
+        function get_data_from_url(url){
+            var http_req = new XMLHttpRequest();
+            http_req.open("GET",url,false);
+            http_req.send(null);
+            return http_req.responseText;          
+        }
+
+        //var data_url = "https://api.atlasacademy.io/export/NA/basic_servant.json";
+        var data_url = "https://api.atlasacademy.io/basic/NA/servant/search?lang=en&name=" + servantName;
+        var servantdata = [];
+        servantdata = JSON.parse(get_data_from_url(data_url));
+        console.log(servantdata);
+        
+        var col = [];
+        for (var i = 0; i < servantdata.length; i++) {
+            for (var key in servantdata[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
+
+        //
+        //var names = document.getElementById('names');
+        // CREATE DYNAMIC TABLE.
+        var table = document.createElement("table");
+
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+        var tr = table.insertRow(-1);                   // TABLE ROW.
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+        
+        for (var i = 0; i < servantdata.length; i++) {
+
+            tr = table.insertRow(-1);
+            
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+               if (j === 6) {      // The last JSON column has image urls.
+
+                        // Create an <img> element to show the images.
+                        var img = document.createElement('img');        
+                        img.src = servantdata[i][col[j]];   // The image source from JSON array.
+                        //console.log(servantdata[i].Image);
+                        tabCell.appendChild(img);
+                        //console.log(img);
+                }
+                else{
+                        tabCell.innerHTML =  servantdata[i][col[j]];
+                           
+                }
+                
+            }
+            
+        //tabCell.innerHTML =  ;
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+    }
+    }
+
+    
+    
+</script>
+
+
+</html>
