@@ -32,5 +32,5 @@ app.get("/", (req,res) => {
     res.render("updateItems");
 });*/
 app.listen(5002, () =>{
-    console.log("Server is on port 5000")
+    console.log("Server is on port 5002")
 })

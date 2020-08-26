@@ -26,4 +26,9 @@ router.post('/addServant/name', (req,res) => {
 router.get('/updateServant', (req,res) => {
     res.render('updateServant');
 });
+router.get('/updateServant/:ID', (req,res) => {
+    let id = [req.params.ID];
+    console.log(id);
+    res.render('updateServant');
+});
 module.exports = router;
